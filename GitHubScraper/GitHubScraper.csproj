@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>Content\favicon.ico</ApplicationIcon>
+    <Title>GitHub Scraper</Title>
+    <Authors>Hunter Industries</Authors>
+    <Product>GitHub Scraper</Product>
+    <Description>An application that gathers issue, commit, pull request, workflow run and release information from GitHubfor specified repositories.</Description>
+    <Copyright>Copyright ©  2025</Copyright>
+    <PackageIcon>favicon.ico</PackageIcon>
+    <RepositoryUrl>https://github.com/LegendarySpork9/Other-Projects/tree/main/GitHub%20Scraper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1.1.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Content\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Content\favicon.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
