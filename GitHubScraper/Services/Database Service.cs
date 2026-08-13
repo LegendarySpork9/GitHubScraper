@@ -78,11 +78,11 @@ namespace GitHubScraper.Services
         /// <summary>
         ///  Gets the existing issues for the given repository.
         /// </summary>
-        public async Task<List<IssueModel>> GetIssues(string repository)
+        public async Task<List<IssueModel>?> GetIssues(string repository)
         {
             _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Obtaining the existing issues for repository {repository}");
 
-            List<IssueModel> existingIssues = [];
+            List<IssueModel>? existingIssues = null;
 
             try
             {
@@ -92,7 +92,7 @@ namespace GitHubScraper.Services
                     new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository }
                 ];
 
-                (existingIssues, Exception? ex) = _Database.Query(sql, dataReader =>
+                (List<IssueModel> results, Exception? ex) = _Database.Query(sql, dataReader =>
                 {
                     DateTime createdDate = DateTime.SpecifyKind(dataReader.GetDateTime(1), DateTimeKind.Utc);
                     DateTime updatedDate = DateTime.SpecifyKind(dataReader.GetDateTime(2), DateTimeKind.Utc);
@@ -114,6 +114,11 @@ namespace GitHubScraper.Services
                     _Logger.LogMessage(StandardValues.LoggerValues.Warning, $"Failed to obtain the existing issues for repository {repository}. Error Message: {ex.Message}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Error, $"Full Error: {ex}");
                 }
+
+                else
+                {
+                    existingIssues = results;
+                }
             }
 
             catch (Exception ex)
@@ -122,7 +127,7 @@ namespace GitHubScraper.Services
                 _Logger.LogMessage(StandardValues.LoggerValues.Error, $"Full Error: {ex}");
             }
 
-            _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"{existingIssues.Count} existsing issue(s)");
+            _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"{existingIssues?.Count ?? 0} existsing issue(s)");
             _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Obtained the existing issues for repository {repository}");
             return existingIssues;
         }

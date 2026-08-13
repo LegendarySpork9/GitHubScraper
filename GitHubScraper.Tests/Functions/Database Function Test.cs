@@ -502,6 +502,65 @@ namespace GitHubScraper.Tests.Functions
             Assert.AreEqual(mockIssue[0].Id, filteredIssues[0].Id);
         }
 
+        /// <summary>
+        /// Checks whether the FilterIssues method returns no records for an unchanged open issue with the sentinel closed date.
+        /// </summary>
+        [TestMethod]
+        public void TestFilterIssuesOpenUnchanged()
+        {
+            DateTime date = new(2026, 03, 04, 00, 00, 00, DateTimeKind.Utc);
+            DateTime defaultDate = new(1900, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+
+            Mock<ILoggerService> _mockLogger = new();
+            Mock<IClock> _mockClock = new();
+            _mockClock.Setup(c => c.UtcNow).Returns(date);
+            _mockClock.Setup(c => c.DefaultDate).Returns(defaultDate);
+
+            DatabaseFunction _databaseFunction = new(_mockLogger.Object, _mockClock.Object);
+
+            List<IssueModel> mockIssue =
+            [
+                new()
+                {
+                    Repository = "Unit-Test",
+                    Id = 46578346587688,
+                    Number = 1,
+                    Title = "Test",
+                    Assignee = new()
+                    {
+                        Login = "UnitTester"
+                    },
+                    Type = "Bug",
+                    State = "Open",
+                    Created_At = date,
+                    Labels =
+                    [
+                        new()
+                        {
+                            Name = "bug"
+                        }
+                    ]
+                }
+            ];
+            List<IssueModel> mockExistingIssue =
+            [
+                new()
+                {
+                    Id = 46578346587688,
+                    Number = 0,
+                    Title = "UnLoaded",
+                    State = "UnLoaded",
+                    Created_At = date,
+                    Closed_At = defaultDate,
+                    Labels = []
+                }
+            ];
+
+            List<IssueModel> filteredIssues = _databaseFunction.FilterIssues("Unit-Test", mockIssue, mockExistingIssue);
+
+            Assert.AreEqual(0, filteredIssues.Count);
+        }
+
         #endregion
     }
 }
