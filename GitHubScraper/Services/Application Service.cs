@@ -128,7 +128,16 @@ namespace GitHubScraper.Services
                 _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Running Scraper for {repository}");
 
                 DateTime lastRunDate = await _databaseService.GetLastRunDate(repository);
-                List<IssueModel> existingIssues = await _databaseService.GetIssues(repository);
+                List<IssueModel>? existingIssues = await _databaseService.GetIssues(repository);
+
+                if (existingIssues == null)
+                {
+                    _Logger.LogMessage(
+                        StandardValues.LoggerValues.Warning,
+                        $"Skipping {repository} due to failed existing issues lookup");
+
+                    continue;
+                }
 
                 List<IssueModel> issues = await _gitHubService.GetIssues(repository, lastRunDate);
                 List<BranchModel> branches = await _gitHubService.GetBranches(repository);

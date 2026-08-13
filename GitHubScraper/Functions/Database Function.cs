@@ -118,6 +118,7 @@ namespace GitHubScraper.Functions
             _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Filtering issues for repository {repository}");
 
             Dictionary<long, IssueModel> existingIssuesDictionary = existingIssues.ToDictionary(i => i.Id);
+            DateTimeOffset defaultDate = _Clock.DefaultDate;
 
             int removedIssues = issues.RemoveAll(i =>
             {
@@ -126,7 +127,7 @@ namespace GitHubScraper.Functions
                     return false;
                 }
 
-                return i.Created_At == existingIssue.Created_At && i.Closed_At == existingIssue.Closed_At;
+                return i.Created_At == existingIssue.Created_At && (i.Closed_At ?? defaultDate) == (existingIssue.Closed_At ?? defaultDate);
             });
 
             _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"{removedIssues} issue(s) removed");

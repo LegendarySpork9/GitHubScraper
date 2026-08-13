@@ -70,8 +70,9 @@ namespace GitHubScraper.Tests.Services
             _mockDatabase.Setup(d => d.Query(It.IsAny<string>(), It.IsAny<Func<SqlDataReader, IssueModel>>(), It.IsAny<SqlParameter[]>()).Result).Returns(([], null));
 
             DatabaseService _databaseService = new(_MockLogger.Object, _MockClock.Object, _MockFileSystem.Object, _MockOptions.Object, _mockDatabase.Object);
-            List<IssueModel> issues = await _databaseService.GetIssues("Unit-Test");
+            List<IssueModel>? issues = await _databaseService.GetIssues("Unit-Test");
 
+            Assert.IsNotNull(issues);
             Assert.AreEqual(0, issues.Count);
         }
 
@@ -97,11 +98,26 @@ namespace GitHubScraper.Tests.Services
 
             DatabaseService _databaseService = new(_MockLogger.Object, _MockClock.Object, _MockFileSystem.Object, _MockOptions.Object, _mockDatabase.Object);
 
-            List<IssueModel> expected = [issue];
-            List<IssueModel> actual = await _databaseService.GetIssues("Unit-Test");
+            List<IssueModel>? actual = await _databaseService.GetIssues("Unit-Test");
 
-            Assert.AreEqual(expected.Count, actual.Count);
-            Assert.AreEqual(expected[0].Id, actual[0].Id);
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(issue.Id, actual[0].Id);
+        }
+
+        /// <summary>
+        /// Checks whether the GetIssues method returns null if the database query fails.
+        /// </summary>
+        [TestMethod]
+        public async Task TestGetIssuesFailed()
+        {
+            Mock<IDatabase> _mockDatabase = new();
+            _mockDatabase.Setup(d => d.Query(It.IsAny<string>(), It.IsAny<Func<SqlDataReader, IssueModel>>(), It.IsAny<SqlParameter[]>()).Result).Returns(([], new Exception("Connection failed")));
+
+            DatabaseService _databaseService = new(_MockLogger.Object, _MockClock.Object, _MockFileSystem.Object, _MockOptions.Object, _mockDatabase.Object);
+            List<IssueModel>? issues = await _databaseService.GetIssues("Unit-Test");
+
+            Assert.IsNull(issues);
         }
     }
 }
