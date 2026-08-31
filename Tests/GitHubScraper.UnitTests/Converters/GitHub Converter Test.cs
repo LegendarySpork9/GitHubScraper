@@ -1,8 +1,7 @@
-﻿// Copyright © - 16/03/2026 - Toby Hunter
+// Copyright © - 16/03/2026 - Toby Hunter
 using GitHubScraper.Converters;
-using Moq;
 
-namespace GitHubScraper.Tests.Converters
+namespace GitHubScraper.UnitTests.Converters
 {
     [TestClass]
     public class GitHubConverterTest
