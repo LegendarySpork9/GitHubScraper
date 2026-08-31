@@ -23,8 +23,7 @@ GitHub Scraper is a console application that gathers issue, commit, pull request
 | Testing | MSTest | 3.6.4 |
 | Test SDK | Microsoft.NET.Test.Sdk | 17.12.0 |
 | Mocking | Moq | 4.20.72 |
-| Code Coverage | Microsoft.Testing.Extensions.CodeCoverage | 17.12.6 |
-| Test Reporting | Microsoft.Testing.Extensions.TrxReport | 1.4.3 |
+| Code Coverage | coverlet.collector | 6.0.2 |
 
 ## Solution Structure
 
@@ -39,10 +38,16 @@ GitHubScraper/
 |   +-- Models/                         # Data models
 |   |   +-- Related/                    # Nested response models
 |   +-- Services/                       # Business logic services
-+-- GitHubScraper.Tests/                # Unit test project
-|   +-- Converters/                     # Converter tests
-|   +-- Functions/                      # Function tests
-|   +-- Services/                       # Service tests
++-- Tests/
+|   +-- GitHubScraper.UnitTests/        # Unit tests — converters, functions, helpers only
+|   |   +-- Converters/                 # Converter tests
+|   |   +-- Functions/                  # Function tests
+|   |   +-- Implementations/           # Implementation wrapper tests
+|   +-- GitHubScraper.PersistenceTests/ # Persistence tests — file I/O, database services
+|   |   +-- Implementations/           # File system wrapper tests
+|   |   +-- Services/                   # Database service tests
+|   +-- GitHubScraper.IntegrationTests/ # Integration tests — service orchestration
+|   |   +-- Services/                   # Application and GitHub service tests
 +-- .github/workflows/                  # CI/CD pipeline definitions
 ```
 
@@ -244,7 +249,7 @@ All workflows run on `windows-latest` using .NET 10.0.x SDK.
 | Workflow | Trigger | Steps |
 |---|---|---|
 | **CI on Commit** (`Commit.yml`) | Push to any branch | Checkout, Restore, Build (Release) |
-| **CI on Pull Request** (`Pull Request.yml`) | PR to any branch | Checkout, Restore, Build (Release), Run Tests |
+| **CI on Pull Request** (`Pull Request.yml`) | PR to any branch | Checkout, Restore, Build (Release), Run Tests with Coverage (`dotnet test --collect:"XPlat Code Coverage"`), Generate Coverage Report, Post Coverage Status, Upload Coverage Artifact |
 | **Check for Linked Issue** (`PR Linked Issue.yml`) | PR opened/edited/reopened/synchronised | Verifies PR has linked GitHub issues via description, comments, or Development section |
 
 ### Build Configuration
@@ -252,6 +257,15 @@ All workflows run on `windows-latest` using .NET 10.0.x SDK.
 - **SDK:** .NET 10.0.x
 - **Configuration:** Release
 - **Test Runner:** `dotnet test` (MSTest with method-level parallelisation)
+
+### Code Coverage
+
+- **Collector:** XPlat Code Coverage (via `coverlet.collector`)
+- **Configuration:** `coverlet.runsettings` in solution root
+- **Report Generator:** `dotnet-reportgenerator-globaltool`
+- **Report Formats:** Cobertura, JsonSummary
+- **Exclusions:** Program entry points, Models, generated code
+- **CI Integration:** Coverage percentage posted to PR status and uploaded as artifact
 
 ## Hosting Requirements
 

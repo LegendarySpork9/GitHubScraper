@@ -4,7 +4,7 @@ using GitHubScraper.Services;
 using Moq;
 using System.Configuration;
 
-namespace GitHubScraper.Tests.Services
+namespace GitHubScraper.IntegrationTests.Services
 {
     [DoNotParallelize]
     [TestClass]
@@ -27,7 +27,6 @@ namespace GitHubScraper.Tests.Services
         /// <summary>
         /// Sets the app settings up for the tests.
         /// </summary>
-
         [TestInitialize]
         public void TestInitialize()
         {

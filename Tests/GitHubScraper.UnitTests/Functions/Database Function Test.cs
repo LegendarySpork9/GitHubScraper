@@ -1,10 +1,10 @@
-﻿// Copyright © - 16/03/2026 - Toby Hunter
+// Copyright © - 16/03/2026 - Toby Hunter
 using GitHubScraper.Abstractions;
 using GitHubScraper.Functions;
 using GitHubScraper.Models;
 using Moq;
 
-namespace GitHubScraper.Tests.Functions
+namespace GitHubScraper.UnitTests.Functions
 {
     [TestClass]
     public class DatabaseFunctionTest
@@ -22,7 +22,7 @@ namespace GitHubScraper.Tests.Functions
             Mock<ILoggerService> _mockLogger = new();
             Mock<IClock> _mockClock = new();
             _mockClock.Setup(c => c.UtcNow).Returns(date);
-            
+
             DatabaseFunction _databaseFunction = new(_mockLogger.Object, _mockClock.Object);
 
             List<IssueAggregateModel> issueAggregates = _databaseFunction.CreateAggregates("Unit-Test", [], []);
@@ -55,20 +55,11 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
 
@@ -96,18 +87,8 @@ namespace GitHubScraper.Tests.Functions
 
             List<IssueAggregateModel> expected =
             [
-                new()
-                {
-                    Date = date.AddDays(-1).Date,
-                    Created = 1,
-                    Solved = 0
-                },
-                new()
-                {
-                    Date = date,
-                    Created = 0,
-                    Solved = 1
-                }
+                new() { Date = date.AddDays(-1).Date, Created = 1, Solved = 0 },
+                new() { Date = date, Created = 0, Solved = 1 }
             ];
             List<IssueModel> mockIssue =
             [
@@ -117,21 +98,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Closed",
                     Created_At = date.AddDays(-1),
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
 
@@ -172,21 +144,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date.AddDays(-15),
                     Closed_At = date.AddDays(-5),
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
 
@@ -201,13 +164,11 @@ namespace GitHubScraper.Tests.Functions
                     Assert.IsTrue(issueAggregate.Created == 1);
                     Assert.IsTrue(issueAggregate.Solved == 0);
                 }
-
                 else if (issueAggregate.Date == date.AddDays(-5).Date)
                 {
                     Assert.IsTrue(issueAggregate.Created == 0);
                     Assert.IsTrue(issueAggregate.Solved == 1);
                 }
-
                 else
                 {
                     Assert.IsTrue(issueAggregate.Created == 0);
@@ -236,21 +197,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
             List<IssueModel> mockExistingIssue =
@@ -297,21 +249,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
             List<IssueModel> mockExistingIssue =
@@ -361,26 +304,16 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
-            List<IssueModel> mockExistingIssue = [];
 
-            List<IssueModel> filteredIssues = _databaseFunction.FilterIssues("Unit-Test", mockIssue, mockExistingIssue);
+            List<IssueModel> filteredIssues = _databaseFunction.FilterIssues("Unit-Test", mockIssue, []);
 
             Assert.AreEqual(1, filteredIssues.Count);
             Assert.AreEqual(mockIssue[0].Id, filteredIssues[0].Id);
@@ -408,21 +341,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
             List<IssueModel> mockExistingIssue =
@@ -466,21 +390,12 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
                     Closed_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
             List<IssueModel> mockExistingIssue =
@@ -526,20 +441,11 @@ namespace GitHubScraper.Tests.Functions
                     Id = 46578346587688,
                     Number = 1,
                     Title = "Test",
-                    Assignee = new()
-                    {
-                        Login = "UnitTester"
-                    },
+                    Assignee = new() { Login = "UnitTester" },
                     Type = "Bug",
                     State = "Open",
                     Created_At = date,
-                    Labels =
-                    [
-                        new()
-                        {
-                            Name = "bug"
-                        }
-                    ]
+                    Labels = [new() { Name = "bug" }]
                 }
             ];
             List<IssueModel> mockExistingIssue =
