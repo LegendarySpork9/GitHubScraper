@@ -14,6 +14,7 @@ namespace GitHubScraper.Implementations
         private readonly ILoggerService _Logger;
         private readonly IGitHubOptions _Options;
         private readonly IClock _Clock;
+        private readonly IRestClientWrapper _RestClient;
 
         private readonly string BaseURL = "https://api.github.com";
 
@@ -21,11 +22,13 @@ namespace GitHubScraper.Implementations
         public GitHubClientWrapper(
             ILoggerService _logger,
             IGitHubOptions _options,
-            IClock _clock)
+            IClock _clock,
+            IRestClientWrapper _restClient)
         {
             _Logger = _logger;
             _Options = _options;
             _Clock = _clock;
+            _RestClient = _restClient;
         }
 
         /// <summary>
@@ -42,12 +45,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -59,7 +57,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");
@@ -112,12 +111,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -129,7 +123,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");
@@ -183,12 +178,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -200,7 +190,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");
@@ -253,12 +244,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -270,7 +256,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");
@@ -334,12 +321,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -351,7 +333,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");
@@ -427,12 +410,7 @@ namespace GitHubScraper.Implementations
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"URL: {url}");
 
-                RestClient client = new(url);
-                client.AddDefaultHeader("Authorization", $"Bearer {_Options.BearerToken}");
-
-                _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Client");
-
-                while (true)
+while (true)
                 {
                     RestRequest request = new()
                     {
@@ -444,7 +422,8 @@ namespace GitHubScraper.Implementations
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Configured Rest Request");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, "Sending Request");
 
-                    RestResponse response = await client.ExecuteAsync(request);
+                    request.AddHeader("Authorization", $"Bearer {_Options.BearerToken}");
+                    RestResponse response = await _RestClient.ExecuteAsync(url, request);
 
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Code: {response.StatusCode}");
                     _Logger.LogMessage(StandardValues.LoggerValues.Debug, $"Response Message: {response.ErrorException?.Message ?? response.Content}");

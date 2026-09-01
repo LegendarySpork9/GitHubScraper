@@ -120,7 +120,7 @@ namespace GitHubScraper.Services
             IClock _clock = new SystemClockProvider();
             IDatabaseOptions _options = new DatabaseOptionsProvider();
             DatabaseService _databaseService = new(_Logger, _clock, new FileSystemWrapper(), _options, new DatabaseWrapper(_options, _Logger));
-            GitHubService _gitHubService = new(_Logger, new GitHubClientWrapper(_Logger, new GitHubOptionsProvider(), _clock));
+            GitHubService _gitHubService = new(_Logger, new GitHubClientWrapper(_Logger, new GitHubOptionsProvider(), _clock, new RestClientWrapper()));
             DatabaseFunction _databaseFunction = new(_Logger, _clock);
 
             foreach (string repository in AppSettingsModel.Repositories)
