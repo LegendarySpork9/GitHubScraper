@@ -449,5 +449,49 @@ namespace GitHubScraper.PersistenceTests.Services
             Assert.IsTrue(result.Count > 0);
             Assert.AreEqual(11223344, result[0].Id);
         }
+
+        /// <summary>
+        /// Checks whether the GetLastRunDate method returns the default date when the SQL files path is invalid.
+        /// </summary>
+        [TestMethod]
+        public async Task TestGetLastRunDateInvalidSqlPath()
+        {
+            FileSystemWrapper _fileSystem = new();
+            Mock<IDatabaseOptions> _mockOptions = new();
+            _mockOptions.Setup(o => o.ConnectionString).Returns(_ConnectionString);
+            _mockOptions.Setup(o => o.SQLFiles).Returns(@"C:\NonExistentPath");
+
+            DatabaseWrapper _database = new(_mockOptions.Object, _MockLogger.Object);
+            DatabaseService _service = new(_MockLogger.Object, _MockClock.Object, _fileSystem, _mockOptions.Object, _database);
+
+            DateTime result = await _service.GetLastRunDate("TestRepo");
+
+            Assert.AreEqual(_MockClock.Object.DefaultDate, result);
+        }
+
+        /// <summary>
+        /// Checks whether the GetLastRunDate method reads from the correct validated path.
+        /// </summary>
+        [TestMethod]
+        public async Task TestGetLastRunDateUsesValidatedPath()
+        {
+            Mock<IFileSystem> _mockFileSystem = new();
+            Mock<IDatabaseOptions> _mockOptions = new();
+            _mockOptions.Setup(o => o.ConnectionString).Returns(_ConnectionString);
+            _mockOptions.Setup(o => o.SQLFiles).Returns(_SqlFilesPath);
+
+            _mockFileSystem.Setup(fs => fs.ReadAllText(It.Is<string>(
+                    path => path.StartsWith(Path.GetFullPath(_SqlFilesPath)))))
+                .ReturnsAsync("SELECT GETUTCDATE()");
+
+            DatabaseWrapper _database = new(_mockOptions.Object, _MockLogger.Object);
+            DatabaseService _service = new(_MockLogger.Object, _MockClock.Object, _mockFileSystem.Object, _mockOptions.Object, _database);
+
+            await _service.GetLastRunDate("TestRepo");
+
+            _mockFileSystem.Verify(fs => fs.ReadAllText(It.Is<string>(
+                    path => path.StartsWith(Path.GetFullPath(_SqlFilesPath)))),
+                Times.Once);
+        }
     }
 }
