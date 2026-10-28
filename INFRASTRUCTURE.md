@@ -172,7 +172,7 @@ The `GitHubService` performs the following normalisation before database inserti
 
 ### SQL Server
 
-All data is persisted to a SQL Server database. SQL statements are externalised as `.sql` files loaded from a configurable directory at runtime.
+All data is persisted to a SQL Server database. SQL statements are externalised as `.sql` files loaded from a configurable directory at runtime. File paths are validated to ensure they resolve within the configured SQL files directory, preventing path traversal.
 
 ### SQL Operations
 

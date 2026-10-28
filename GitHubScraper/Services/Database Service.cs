@@ -31,6 +31,24 @@ namespace GitHubScraper.Services
         }
 
         /// <summary>
+        /// Returns the SQL file content after validating the path stays within the configured SQL files directory.
+        /// </summary>
+        private async Task<string> ReadSqlFile(string fileName)
+        {
+            string filePath = Path.Combine(
+                _Options.SQLFiles,
+                fileName);
+            string resolvedPath = Path.GetFullPath(filePath);
+
+            if (!resolvedPath.StartsWith(Path.GetFullPath(_Options.SQLFiles)))
+            {
+                throw new InvalidOperationException($"SQL file path '{fileName}' resolves outside the configured directory.");
+            }
+
+            return await _FileSystem.ReadAllText(resolvedPath);
+        }
+
+        /// <summary>
         /// Gets the last time the application was run for the given repository.
         /// </summary>
         public async Task<DateTime> GetLastRunDate(string repository)
@@ -41,7 +59,7 @@ namespace GitHubScraper.Services
 
             try
             {
-                string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\GetLastRunDate.sql");
+                string sql = await ReadSqlFile("GetLastRunDate.sql");
                 SqlParameter[] parameters =
                 [
                     new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository }
@@ -86,7 +104,7 @@ namespace GitHubScraper.Services
 
             try
             {
-                string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\GetIssues.sql");
+                string sql = await ReadSqlFile("GetIssues.sql");
                 SqlParameter[] parameters =
                 [
                     new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository }
@@ -148,7 +166,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\OutputIssue.sql");
+                    string sql = await ReadSqlFile("OutputIssue.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = issue.Repository },
@@ -216,7 +234,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\OutputCommit.sql");
+                    string sql = await ReadSqlFile("OutputCommit.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = commit.Repository },
@@ -280,7 +298,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\OutputPullRequest.sql");
+                    string sql = await ReadSqlFile("OutputPullRequest.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = pullRequest.Repository },
@@ -349,7 +367,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\OutputWorkflowRun.sql");
+                    string sql = await ReadSqlFile("OutputWorkflowRun.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = workflowRun.RepositoryName },
@@ -418,7 +436,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\OutputRelease.sql");
+                    string sql = await ReadSqlFile("OutputRelease.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = release.Repository },
@@ -486,7 +504,7 @@ namespace GitHubScraper.Services
 
                 try
                 {
-                    string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\LogIssueAggregate.sql");
+                    string sql = await ReadSqlFile("LogIssueAggregate.sql");
                     SqlParameter[] parameters =
                     [
                         new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository },
@@ -539,7 +557,7 @@ namespace GitHubScraper.Services
 
             try
             {
-                string sql = await _FileSystem.ReadAllText($@"{_Options.SQLFiles}\LogRun.sql");
+                string sql = await ReadSqlFile("LogRun.sql");
                 SqlParameter[] parameters =
                 [
                     new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository },
