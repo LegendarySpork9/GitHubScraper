@@ -127,6 +127,7 @@ namespace GitHubScraper.Services
             {
                 _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Running Scraper for {repository}");
 
+                DateTime runStartTime = _clock.UtcNow;
                 DateTime lastRunDate = await _databaseService.GetLastRunDate(repository);
                 List<IssueModel>? existingIssues = await _databaseService.GetIssues(repository);
 
@@ -194,7 +195,7 @@ namespace GitHubScraper.Services
                 List<IssueAggregateModel> issueAggregates = _databaseFunction.CreateAggregates(repository, _databaseFunction.FilterIssues(repository, issues, existingIssues), existingIssues);
 
                 await _databaseService.LogIssueAggregates(repository, issueAggregates);
-                await _databaseService.LogRun(repository, issues.Count, commits.Count, pullRequests.Count, totalWorkflowRuns, releases.Count);
+                await _databaseService.LogRun(repository, runStartTime, issues.Count, commits.Count, pullRequests.Count, totalWorkflowRuns, releases.Count);
 
                 _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Ran Scraper for {repository}");
             }
