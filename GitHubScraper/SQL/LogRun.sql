@@ -4,7 +4,7 @@ values (
 		select RepositoryId from Repository with (nolock)
 		where [Name] = @repository
 	),
-	getutcdate(),
+	@runDate,
 	@issues,
 	@commits,
 	@pullRequests,

@@ -341,18 +341,20 @@ namespace GitHubScraper.PersistenceTests.Services
             DatabaseWrapper _database = new(_mockOptions.Object, _MockLogger.Object);
             DatabaseService _service = new(_MockLogger.Object, _MockClock.Object, _fileSystem, _mockOptions.Object, _database);
 
-            await _service.LogRun("LogRunTest", 5, 10, 3, 2, 1);
+            DateTime runDate = new(2026, 11, 04, 10, 0, 0, DateTimeKind.Utc);
+            await _service.LogRun("LogRunTest", runDate, 5, 10, 3, 2, 1);
 
             using (SqlConnection connection = new(_ConnectionString))
             {
                 connection.Open();
 
                 using (SqlCommand command = new(
-                    "SELECT Issues FROM RunHistory WHERE RepositoryId = (SELECT RepositoryId FROM Repository WHERE [Name] = 'LogRunTest') ORDER BY RunHistoryId DESC", connection))
+                    "SELECT TOP 1 RunDate, Issues FROM RunHistory WHERE RepositoryId = (SELECT RepositoryId FROM Repository WHERE [Name] = 'LogRunTest') ORDER BY RunHistoryId DESC", connection))
                 {
-                    object? result = command.ExecuteScalar();
-                    Assert.IsNotNull(result);
-                    Assert.AreEqual(5, (int)result);
+                    using SqlDataReader reader = command.ExecuteReader();
+                    Assert.IsTrue(reader.Read());
+                    Assert.AreEqual(runDate, DateTime.SpecifyKind(reader.GetDateTime(0), DateTimeKind.Utc));
+                    Assert.AreEqual(5, reader.GetInt32(1));
                 }
             }
         }

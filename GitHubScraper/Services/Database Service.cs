@@ -551,7 +551,7 @@ namespace GitHubScraper.Services
         /// <summary>
         /// Logs the run to the database.
         /// </summary>
-        public async Task LogRun(string repository, int issues, int commits, int pullRequests, int workflowRuns, int releases)
+        public async Task LogRun(string repository, DateTime runDate, int issues, int commits, int pullRequests, int workflowRuns, int releases)
         {
             _Logger.LogMessage(StandardValues.LoggerValues.Info, $"Logging run for repository {repository}");
 
@@ -561,6 +561,7 @@ namespace GitHubScraper.Services
                 SqlParameter[] parameters =
                 [
                     new SqlParameter("@repository", System.Data.SqlDbType.VarChar) { Value = repository },
+                    new SqlParameter("@runDate", System.Data.SqlDbType.DateTime) { Value = runDate },
                     new SqlParameter("@issues", System.Data.SqlDbType.Int) { Value = issues },
                     new SqlParameter("@commits", System.Data.SqlDbType.Int) { Value = commits },
                     new SqlParameter("@pullRequests", System.Data.SqlDbType.Int) { Value = pullRequests },
